@@ -1,0 +1,86 @@
+@model KooliProjekt.Data.PagedResult<KooliProjekt.Data.Product>
+
+
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Car List</h1>
+@if(User.IsInRole("Admin"))
+{
+    <p>
+       | <a asp-action="Create">Create New</a> | 
+       <a asp-controller="Customer" asp-action="AdminPanel"> Back to Admin Panel</a> |
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Image
+            </th>
+            <th>
+                Brand
+            </th>
+            <th>
+                Model
+            </th>
+            <th>
+                Manufacturer
+            </th>
+            <th>
+                CarNum
+            </th>
+            <th>
+                CarType
+            </th>
+            <th>
+                DistancePrice
+            </th>
+            <th>
+                TimePrice
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Results) {
+        <tr>
+            <td>
+                <img style="width:100px; height:100px;" src="/Product/Image/@item.Id"/>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Brand)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Model)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Manufacturer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CarNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CarType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DistancePrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TimePrice)
+            </td>
+            <td>
+                @if(User.IsInRole("Admin")){<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> }|
+                @if(User.IsInRole("Admin") || User.IsInRole("User")){<a asp-action="Details" asp-route-id="@item.Id">Details</a>}
+                @if(User.IsInRole("Admin")){<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>} |
+                @if(User.IsInRole("Admin") || User.IsInRole("User")){<a style="display: flex; " asp-controller="Order" asp-action="Create" asp-route-productId="@item.Id" asp-route-customerId="@User"><h2>Order this car</h2></a>}
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+@(await Component.InvokeAsync<KooliProjekt.Components.PagerViewComponent>(new { result = Model, viewName = "Default" }))
